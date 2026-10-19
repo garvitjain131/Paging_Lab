@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Compare FIFO and LRU page replacement and explore Denning's working-set model.">
+  <title>Paging Lab · OS Simulator</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="algorithms.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <main>
+    <header><span class="eyebrow">OPERATING SYSTEMS / INTERACTIVE LAB</span><h1>Small memory.<br><span>Big decisions.</span></h1><p>See how FIFO and LRU choose which page leaves RAM.<br>Explore the working set behind each request.</p></header>
+    <section class="controls" aria-label="Simulation settings">
+      <form id="settings">
+        <label class="sequence-label">Page reference sequence<input id="sequence" value="7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2" autocomplete="off" spellcheck="false" required aria-describedby="sequence-help"></label>
+        <label>RAM frames<input id="frames" type="number" min="1" max="8" value="3" required></label>
+        <label>Window size (k)<input id="window" type="number" min="1" max="20" value="4" required></label>
+        <button type="submit" class="primary">Run simulation ↗</button>
+      </form>
+      <div class="input-help"><span id="sequence-help">Separate page numbers with commas or spaces. Up to 60 requests.</span><button id="example" type="button" class="text-button">Load thrashing example</button></div>
+      <p id="error" role="alert" hidden></p>
+    </section>
+    <section class="playback" aria-label="Step controls"><div><span class="eyebrow">REQUEST <span id="progress">0 / 0</span></span><p id="current" aria-live="polite">Ready to simulate</p></div><div class="buttons"><button id="reset" type="button">Reset</button><button id="back" type="button" aria-label="Previous request">← Back</button><button id="next" type="button">Next →</button><button id="play" type="button" class="primary">Play</button></div></section>
+    <div id="timeline" class="timeline" role="group" aria-label="Jump to a request"></div>
+    <section class="comparison" aria-label="Page replacement comparison">
+      <article class="algorithm" id="fifo"><div class="algorithm-heading"><h2>FIFO</h2><span>First in, first out</span></div><p>Evict the page loaded earliest. Hits do not change its order.</p><div class="frames" aria-label="FIFO memory frames"></div><div class="metrics"></div><p class="event" aria-live="polite"></p></article>
+      <article class="algorithm" id="lru"><div class="algorithm-heading"><h2>LRU</h2><span>Least recently used</span></div><p>Evict the page whose last access was longest ago.</p><div class="frames" aria-label="LRU memory frames"></div><div class="metrics"></div><p class="event" aria-live="polite"></p></article>
+    </section>
+    <section class="working" aria-label="Working set tracker"><div><span class="eyebrow">DENNING'S WORKING-SET MODEL</span><h2>What is actively being used?</h2><p>Distinct pages in the last <strong id="window-label">4</strong> requests.<br>This tracker measures recent demand alongside FIFO and LRU.</p><p class="window-refs" id="window-refs"></p></div><div><div id="working-pages" class="working-pages"></div><p id="pressure" aria-live="polite"></p></div></section>
+    <section class="results"><h2>Full-sequence results</h2><p id="verdict"></p><div class="table-scroll"><table><thead><tr><th scope="col">Algorithm</th><th scope="col">Page faults</th><th scope="col">Hits</th><th scope="col">Hit rate</th></tr></thead><tbody id="results"></tbody></table></div><details><summary>How does this connect to the research paper?</summary><p>Peter J. Denning's working set is the set of pages referenced during a recent interval of process execution. Our teaching version uses the last k page requests. If this set is larger than RAM capacity, it signals memory pressure and a risk of thrashing. It does not prove that thrashing is occurring.</p><p>The tracker is not a third replacement algorithm. Denning also connects memory allocation to process scheduling, which this single-process simulator does not implement.</p><a href="https://denninginstitute.com/pjd/PUBS/WSModel_1968.pdf" target="_blank" rel="noopener noreferrer">Read the original 1968 paper ↗</a></details></section>
+    <footer>Paging Lab <span>FIFO · LRU · Working Set</span></footer>
+  </main>
+</body>
+</html>
